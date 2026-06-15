@@ -22,7 +22,7 @@ const addLivro = async (request, response) => {
 }
 
 const updateLivro = async (request, response) => {
-    await updateLivroDB(request.body)
+    await updateLivroDB(request.body, parseInt(request.params.codigo))
         .then(data => response.status(200).json({
             status: "success", message: "Livro alterado",
             objeto: data

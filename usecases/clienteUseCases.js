@@ -24,15 +24,15 @@ const addClienteDB = async (body) => {
     }    
 }
 
-const updateClienteDB = async (body) => {
+const updateClienteDB = async (body, codigo) => {
     try {   
-        const { id_cliente, nome, cpf, data_nascimento, multa } = body; 
+        const { nome, cpf, data_nascimento, multa } = body; 
         const results = await pool.query(`UPDATE clientes set nome = $2, cpf = $3, data_nascimento = $4, multa = $5 
             where id_cliente = $1 
             returning id_cliente, nome, cpf, data_nascimento, multa`,
-        [id_cliente, nome, cpf, data_nascimento, multa]);        
+        [codigo, nome, cpf, data_nascimento, multa]);        
         if (results.rowCount == 0){
-            throw `Nenhum registro encontrado com o código ${id_cliente} para ser alterado`;
+            throw `Nenhum registro encontrado com o código ${codigo} para ser alterado`;
         }
         const c = results.rows[0];
         return new Cliente(c.id_cliente, c.nome, c.cpf, c.data_nascimento, c.multa); 

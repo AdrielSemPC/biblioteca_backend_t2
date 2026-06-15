@@ -30,7 +30,7 @@ const addEmprestimo = async (request, response) => {
 }
 
 const updateEmprestimo = async (request, response) => {
-    await updateEmprestimoDB(request.body)
+    await updateEmprestimoDB(request.body, parseInt(request.params.codigo))
         .then(data => response.status(200).json({
             status: "success", 
             message: "Empréstimo alterado com sucesso",

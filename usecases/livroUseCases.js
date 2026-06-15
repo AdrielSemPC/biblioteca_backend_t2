@@ -24,15 +24,15 @@ const addLivroDB = async (body) => {
     }    
 }
 
-const updateLivroDB = async (body) => {
+const updateLivroDB = async (body, codigo) => {
     try {   
-        const { id_livro, titulo, edicao, ano, isbn } = body; 
+        const { titulo, edicao, ano, isbn } = body; 
         const results = await pool.query(`UPDATE livros set titulo = $2, edicao = $3, ano = $4, isbn = $5 
             where id_livro = $1 
             returning id_livro, titulo, edicao, ano, isbn`,
-        [id_livro, titulo, edicao, ano, isbn]);        
+        [codigo, titulo, edicao, ano, isbn]);        
         if (results.rowCount == 0){
-            throw `Nenhum registro encontrado com o código ${id_livro} para ser alterado`;
+            throw `Nenhum registro encontrado com o código ${codigo} para ser alterado`;
         }
         const l = results.rows[0];
         return new Livro(l.id_livro, l.titulo, l.edicao, l.ano, l.isbn); 

@@ -79,15 +79,15 @@ const addEmprestimoDB = async (body) => {
     }    
 }
 
-const updateEmprestimoDB = async (body) => {
+const updateEmprestimoDB = async (body, codigo) => {
     try {   
-        const { id_emprestimo, id_cliente, id_livro, id_bibliotecario, data_inicio, data_fim, data_devolucao, status } = body; 
+        const { id_cliente, id_livro, id_bibliotecario, data_inicio, data_fim, data_devolucao, status } = body; 
         const results = await pool.query(`UPDATE emprestimos set id_cliente = $2, id_livro = $3, id_bibliotecario = $4, data_inicio = $5, data_fim = $6, data_devolucao = $7, status = $8 
             where id_emprestimo = $1 
             returning id_emprestimo, id_cliente, id_livro, id_bibliotecario, data_inicio, data_fim, data_devolucao, status`,
-        [id_emprestimo, id_cliente, id_livro, id_bibliotecario, data_inicio, data_fim, data_devolucao, status]);        
+        [codigo, id_cliente, id_livro, id_bibliotecario, data_inicio, data_fim, data_devolucao, status]);        
         if (results.rowCount == 0){
-            throw `Nenhum registro encontrado com o código ${id_emprestimo} para ser alterado`;
+            throw `Nenhum registro encontrado com o código ${codigo} para ser alterado`;
         }
         const e = results.rows[0];
         return new Emprestimo(e.id_emprestimo, e.id_cliente, e.id_livro, e.id_bibliotecario, e.data_inicio, e.data_fim, e.data_devolucao, e.status); 

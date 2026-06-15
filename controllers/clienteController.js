@@ -22,7 +22,7 @@ const addCliente = async (request, response) => {
 }
 
 const updateCliente = async (request, response) => {
-    await updateClienteDB(request.body)
+    await updateClienteDB(request.body, parseInt(request.params.codigo))
         .then(data => response.status(200).json({
             status: "success", message: "Cliente alterado",
             objeto: data

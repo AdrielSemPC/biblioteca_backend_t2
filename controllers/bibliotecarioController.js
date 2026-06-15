@@ -22,7 +22,7 @@ const addBibliotecario = async (request, response) => {
 }
 
 const updateBibliotecario = async (request, response) => {
-    await updateBibliotecarioDB(request.body)
+    await updateBibliotecarioDB(request.body, parseInt(request.params.codigo))
         .then(data => response.status(200).json({
             status: "success", message: "Bibliotecário alterado",
             objeto: data

@@ -24,15 +24,15 @@ const addBibliotecarioDB = async (body) => {
     }    
 }
 
-const updateBibliotecarioDB = async (body) => {
+const updateBibliotecarioDB = async (body, codigo) => {
     try {   
-        const { id_bibliotecario, nome, cpf, data_nascimento } = body; 
+        const { nome, cpf, data_nascimento } = body; 
         const results = await pool.query(`UPDATE bibliotecarios SET nome = $2, cpf = $3, data_nascimento = $4 
             WHERE id_bibliotecario = $1 
             returning id_bibliotecario, nome, cpf, data_nascimento`,
-        [id_bibliotecario, nome, cpf, data_nascimento]);        
+        [codigo, nome, cpf, data_nascimento]);        
         if (results.rowCount == 0){
-            throw `Nenhum registro encontrado com o código ${id_bibliotecario} para ser alterado`;
+            throw `Nenhum registro encontrado com o código ${codigo} para ser alterado`;
         }
         const b = results.rows[0];
         return new Bibliotecario(b.id_bibliotecario, b.nome, b.cpf, b.data_nascimento); 
