@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const { verificaJWT, verificaAdmin } = require('../controllers/segurancaController');
 
 const {
   getClientes,
@@ -11,12 +12,12 @@ const {
 const clientes = Router();
 
 clientes.route('/')
-  .get(getClientes)
-  .post(addCliente);
+  .get(verificaJWT, getClientes)
+  .post(verificaJWT, verificaAdmin, addCliente);
 
 clientes.route('/:codigo')
-  .get(getClientePorCodigo)
-  .put(updateCliente)
-  .delete(deleteCliente);
+  .get(verificaJWT, getClientePorCodigo)
+  .put(verificaJWT, verificaAdmin, updateCliente)
+  .delete(verificaJWT, verificaAdmin, deleteCliente);
 
 module.exports = clientes;

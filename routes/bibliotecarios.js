@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const { verificaJWT, verificaAdmin } = require('../controllers/segurancaController');
 
 const {
   getBibliotecarios,
@@ -11,12 +12,12 @@ const {
 const bibliotecarios = Router();
 
 bibliotecarios.route('/')
-  .get(getBibliotecarios)
-  .post(addBibliotecario);
+  .get(verificaJWT, getBibliotecarios)
+  .post(verificaJWT, verificaAdmin, addBibliotecario);
 
 bibliotecarios.route('/:codigo')
-  .get(getBibliotecarioPorCodigo)
-  .put(updateBibliotecario)
-  .delete(deleteBibliotecario);
+  .get(verificaJWT, getBibliotecarioPorCodigo)
+  .put(verificaJWT, verificaAdmin, updateBibliotecario)
+  .delete(verificaJWT, verificaAdmin, deleteBibliotecario);
 
 module.exports = bibliotecarios;
