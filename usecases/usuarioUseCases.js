@@ -32,14 +32,15 @@ const addUsuarioDB = async (body, tipoPadrao = 'U') => {
 
 const updateUsuarioDB = async (body, email) => {
     try {   
-        const { nome, email: novoEmail, telefone, senha } = body; 
+        const { nome, email: novoEmail, telefone, senha, tipo } = body; 
         if (!nome || !novoEmail || !telefone) {
             throw "Informe nome, email e telefone.";
         }
-        const results = await pool.query(`UPDATE usuarios set nome = $2, email = $3, telefone = $4, senha = COALESCE(NULLIF($5, ''), senha)
+        // tipo is optional; when provided it will update, otherwise keep existing
+        const results = await pool.query(`UPDATE usuarios set nome = $2, email = $3, telefone = $4, senha = COALESCE(NULLIF($5, ''), senha), tipo = COALESCE(NULLIF($6, ''), tipo)
             where email = $1 
             returning nome, email, tipo, telefone`,
-        [email, nome, novoEmail, telefone, senha ?? '']);        
+        [email, nome, novoEmail, telefone, senha ?? '', tipo ?? '']);        
         if (results.rowCount == 0){
             throw `Nenhum registro encontrado com o email ${email} para ser alterado`;
         }
