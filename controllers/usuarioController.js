@@ -10,7 +10,7 @@ const {
     getUsuarioLogadoDB,
     updateUsuarioLogadoDB,
     deleteUsuarioLogadoDB
-} = require('../usecases/UsuarioUseCases')
+} = require('../usecases/usuarioUseCases')
 
 const trataErroUsuario = (response, err) => {
     const message = String(err?.message || err);
