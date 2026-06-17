@@ -45,26 +45,53 @@ const addUsuario = async (request, response) => {
 
 const updateUsuario = async (request, response) => {
     const usuarioLogado = request.usuario;
-    if (!usuarioLogado || usuarioLogado.email !== request.params.email) {
+    if (!usuarioLogado) {
+        return response.status(403).json({
+            status: 'error',
+            message: 'Acesso negado. Usuario nao autenticado.'
+        });
+    }
+
+    const isAdmin = usuarioLogado.tipo === 'A';
+    const editandoOutro = usuarioLogado.email !== request.params.email;
+
+    if (!isAdmin && editandoOutro) {
         return response.status(403).json({
             status: 'error',
             message: 'Acesso negado. Voce so pode alterar seu proprio cadastro.'
         });
     }
 
+    // Protecao: admin nao pode alterar o proprio tipo
+    if (isAdmin && !editandoOutro) {
+        // remove tipo de body para evitar mudanca do proprio privilegio
+        if (request.body && Object.prototype.hasOwnProperty.call(request.body, 'tipo')) {
+            delete request.body.tipo;
+        }
+    }
+
     await updateUsuarioDB(request.body, request.params.email)
         .then(data => {
-            const token = jwt.sign({ usuario: data }, process.env.SECRET, {
-                expiresIn: 300
-            });
+            // If user updated their own data, return new token. If admin updated other user, no token.
+            if (!editandoOutro) {
+                const token = jwt.sign({ usuario: data }, process.env.SECRET, {
+                    expiresIn: 300
+                });
 
-            response.status(200).json({
-                status: "success",
-                message: "Usuario alterado",
-                objeto: data,
-                auth: true,
-                token
-            });
+                response.status(200).json({
+                    status: "success",
+                    message: "Usuario alterado",
+                    objeto: data,
+                    auth: true,
+                    token
+                });
+            } else {
+                response.status(200).json({
+                    status: "success",
+                    message: "Usuario alterado",
+                    objeto: data
+                });
+            }
         })
         .catch(err => trataErroUsuario(response, err));
 }
